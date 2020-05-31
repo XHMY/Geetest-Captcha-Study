@@ -12,7 +12,7 @@ from wget import download
 
 
 def first_click(web):
-    time.sleep(1.5)
+    time.sleep(2.5)
     web.execute_script(
         "document.getElementsByClassName('geetest_radar_tip')[0].click()")
     time.sleep(1.5)
@@ -26,9 +26,9 @@ def first_click(web):
 
 
 def retry_clikc(web):
-    # time.sleep(1)
-    web.execute_script(
-        "document.getElementsByClassName('geetest_refresh')[0].click()")
+    web.execute_script("document.getElementsByClassName('geetest_refresh')[0].click()")
+    time.sleep(1)
+    web.execute_script("document.getElementsByClassName('geetest_reset_tip_content')[0].click()")
     time.sleep(1)
     ele = web.find_elements_by_xpath('//*[@class="geetest_item_img"]')
     for i in ele:
@@ -53,7 +53,8 @@ def get_challenge(web, i):
     # i=i+1
     selector = HTML(web.page_source)
     # 定位到正确的包含Challenge的位置
-    selector_challenge = str(selector.xpath('/html/head/script[4+10*{}]/@src'.format(i))[0])
+    selector_challenge = str(selector.xpath('/html/head/script[.]/@src')[-5])
+    print(selector_challenge)
     challenge = re.search(r"&challenge=(.+?)&", selector_challenge).group(1)
     return challenge
 
@@ -101,7 +102,7 @@ def run_scrape():
     gt = get_gt(web)
     challenge = get_challenge(web, cnt_c)
     while cnt < task_num:
-        if cnt % 5 and cnt != 0:
+        if cnt % 5 == 0 and cnt != 0:
             cnt_c += 1
             picurlQ.append(retry_clikc(web))
             challenge = get_challenge(web, cnt_c)
