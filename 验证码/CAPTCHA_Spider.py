@@ -53,8 +53,7 @@ def get_challenge(web, i):
     # i=i+1
     selector = HTML(web.page_source)
     # 定位到正确的包含Challenge的位置
-    selector_challenge = str(selector.xpath('/html/head/script[.]/@src')[-5])
-    print(selector_challenge)
+    selector_challenge = str(selector.xpath('/html/head/script[.]/@src')[-1])
     challenge = re.search(r"&challenge=(.+?)&", selector_challenge).group(1)
     return challenge
 
@@ -92,7 +91,7 @@ finish = False
 
 
 def run_scrape():
-    task_num = 10
+    task_num = 20
     cnt = 0
     cnt_c = 0
     web = Chrome()  # 使用Chrome打开，WebDrive放置在bin目录下因此不需要指定路径
