@@ -12,10 +12,10 @@ from wget import download
 
 
 def first_click(web):
-    time.sleep(1)
+    time.sleep(1.5)
     web.execute_script(
         "document.getElementsByClassName('geetest_radar_tip')[0].click()")
-    time.sleep(1)
+    time.sleep(1.5)
     ele = web.find_elements_by_xpath('//*[@class="geetest_item_img"]')
     for i in ele:
         pic_url = i.get_attribute('src').split('?')[0]
@@ -52,9 +52,9 @@ def get_challenge(web, i):
     # i=0#i为点击重试次数
     # i=i+1
     selector = HTML(web.page_source)
-    selector_challenge = selector.xpath(
-        '/html/head/script[4+10*{}]/@src'.format(i))[0]
-    challenge = selector_challenge.split('=')[3].split('&')[0]
+    # 定位到正确的包含Challenge的位置
+    selector_challenge = str(selector.xpath('/html/head/script[4+10*{}]/@src'.format(i))[0])
+    challenge = re.search(r"&challenge=(.+?)&", selector_challenge).group(1)
     return challenge
 
 
@@ -100,17 +100,16 @@ def run_scrape():
     picurlQ.append(first_click(web))
     gt = get_gt(web)
     challenge = get_challenge(web, cnt_c)
-
     while cnt < task_num:
         if cnt % 5 and cnt != 0:
+            cnt_c += 1
             picurlQ.append(retry_clikc(web))
             challenge = get_challenge(web, cnt_c)
-            cnt_c += 1
             cnt += 1
         url = "https://api.geetest.com/refresh.php?gt={}&challenge={}&lang=zh-cn&type=click&callback=geetest_{}".format(
             gt, challenge, int(round(time.time() * 1000)))
         data = requests.get(url).text
-        picurlQ.append("https://static.geetest.com" + re.match(r"pic\": \"(.+?)\"", data).group(1))
+        picurlQ.append("https://static.geetest.com" + re.search(r"pic\": \"(.+?)\"", data).group(1))
         cnt += 1
 
 
