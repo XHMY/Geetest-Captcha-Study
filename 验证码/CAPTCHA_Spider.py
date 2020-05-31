@@ -91,7 +91,7 @@ finish = False
 
 
 def run_scrape():
-    task_num = 20
+    task_num = 30
     cnt = 0
     cnt_c = 0
     web = Chrome()  # 使用Chrome打开，WebDrive放置在bin目录下因此不需要指定路径
@@ -105,7 +105,7 @@ def run_scrape():
             cnt_c += 1
             picurlQ.append(retry_clikc(web))
             challenge = get_challenge(web, cnt_c)
-            cnt += 1
+            # cnt += 1
         url = "https://api.geetest.com/refresh.php?gt={}&challenge={}&lang=zh-cn&type=click&callback=geetest_{}".format(
             gt, challenge, int(round(time.time() * 1000)))
         data = requests.get(url).text
