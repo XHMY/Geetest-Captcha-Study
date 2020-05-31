@@ -86,6 +86,7 @@ def download_image(threadID):
 
 error_img_list = []
 picurlQ = []
+picSet = {}
 finish = False
 
 
