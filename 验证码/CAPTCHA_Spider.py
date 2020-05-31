@@ -126,12 +126,12 @@ def run_scrape():
                 du_cnt += 1
                 print("\n检测到重复链接，当前总计重复{}张，本次任务重复率 {:.2}%".format(
                     du_cnt, (cnt+cnt_c)/du_cnt*100))
-                continue
-            challenge = get_challenge(web) # 获取challenge
-            picSet.add(t_url)
-            fd.write(t_url + '\n')
-            # picurlQ.append(t_url)
-            print("\n已爬取 {} 个验证码链接".format(cnt + cnt_c))
+            else:
+                challenge = get_challenge(web) # 获取challenge
+                picSet.add(t_url)
+                fd.write(t_url + '\n')
+                # picurlQ.append(t_url)
+                print("\n已爬取 {} 个验证码链接".format(cnt + cnt_c))
         url = "https://api.geetest.com/refresh.php?gt={}&challenge={}&lang=zh-cn&type=click&callback=geetest_{}".format(
             gt, challenge, int(round(time.time() * 1000)))
         data = requests.get(url).text
