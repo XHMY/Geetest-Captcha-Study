@@ -4,6 +4,7 @@ import requests
 import threading
 from lxml.etree import HTML
 import re
+from retrying import retry
 
 from wget import download
 
@@ -15,20 +16,15 @@ def first_click(web):
     time.sleep(2.5)
     web.execute_script(
         "document.getElementsByClassName('geetest_radar_tip')[0].click()")
-    time.sleep(2)
+    time.sleep(3)
     ele = web.find_elements_by_xpath('//*[@class="geetest_item_img"]')
     for i in ele:
         pic_url = i.get_attribute('src').split('?')[0]
     return pic_url
 
 
-# 传入参数为selenium的浏览器（状态为触发5次之后的重试），需要触发一次显示验证码并返回对应的图片地址
-
-
-def retry_clikc(web):
-    web.execute_script(
-        "document.getElementsByClassName('geetest_refresh')[0].click()")
-    time.sleep(1)
+@retry(stop_max_attempt_number=10, wait_random_min=500, wait_random_max=1000)
+def retry_clikc_child(web):
     web.execute_script(
         "document.getElementsByClassName('geetest_reset_tip_content')[0].click()")
     time.sleep(1)
@@ -36,6 +32,15 @@ def retry_clikc(web):
     for i in ele:
         pic_url = i.get_attribute('src').split('?')[0]
     return pic_url
+
+# 传入参数为selenium的浏览器（状态为触发5次之后的重试），需要触发一次显示验证码并返回对应的图片地址
+
+
+def retry_clikc(web):
+    web.execute_script(
+        "document.getElementsByClassName('geetest_refresh')[0].click()")
+    time.sleep(2)
+    return retry_clikc_child(web)
 
 
 # 传入参数为selenium的浏览器，需要在页面中找到gt并返回
@@ -119,7 +124,7 @@ def run_scrape():
     #     down_thread[i].start()
 
     # 主爬取循环
-    while cnt + cnt_c < task_num:
+    while cnt + cnt_c + ar_num < task_num:
         # 每5次需要点击重试
         if cnt % 5 == 0 and cnt != 0:
             cnt_c += 1
