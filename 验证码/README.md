@@ -6,7 +6,9 @@
 
 + 输入命令 python CAPTCHA_Spider.py 运行这个爬虫
 
-+ 看到目录下生成了一个名为 image_url.txt 的文件 
++ 看到目录下生成了一个名为 image_url.txt 的文件，为输出文件，里面的网址不重复
+
++ 目录下的 gt.txt 文件是本次检测到的gt值
 
 ## 说明
 
