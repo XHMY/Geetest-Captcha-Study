@@ -89,12 +89,13 @@ def download_image(threadID):
 error_img_list = []  # 错误列表
 # picurlQ = []  # 下载图片任务队列
 picSet = set()  # 记录所有下载过的图片的集合
+ar_num  = 0
 # finish = False  # 完成标示
 
 
 def run_scrape():
 
-    task_num = 30  # 爬多少个验证码停止（包括重复的）
+    task_num = 100000  # 爬多少个验证码停止（包括重复的）
     cnt = 0  # 用于记录一部分总数
     cnt_c = 0  # 用于记录重试次数
     du_cnt = 0  # 用于记录重复的次数
@@ -108,6 +109,8 @@ def run_scrape():
     picSet.add(t_url)
     fd.write(t_url + '\n')
     gt = get_gt(web) # 获取gt值（从头到位不会变）
+    with open("gt.txt",'w') as td:
+        td.write(gt)
     challenge = get_challenge(web) # 获取第一个challenge值
 
     # 开启用于下载图片的线程
@@ -122,16 +125,17 @@ def run_scrape():
             cnt_c += 1
             t_url = retry_clikc(web) # 点击重试
             # 如果这个url已经在里面，就跳过
+            challenge = get_challenge(web) # 获取challenge
             if t_url in picSet:
                 du_cnt += 1
-                print("\n检测到重复链接，当前总计重复{}张，本次任务重复率 {:.2}%".format(
-                    du_cnt, (cnt+cnt_c)/du_cnt*100))
+                print("检测到重复链接，当前总计重复{}张，本次任务重复率 {:.2f}%".format(
+                    du_cnt, (du_cnt/(cnt+cnt_c))*100))
+                
             else:
-                challenge = get_challenge(web) # 获取challenge
                 picSet.add(t_url)
                 fd.write(t_url + '\n')
                 # picurlQ.append(t_url)
-                print("\n已爬取 {} 个验证码链接".format(cnt + cnt_c))
+                print("已爬取 {} 个验证码链接   完成 {:.2f}%".format(cnt + cnt_c,((cnt + cnt_c + ar_num)/task_num) * 100))
         url = "https://api.geetest.com/refresh.php?gt={}&challenge={}&lang=zh-cn&type=click&callback=geetest_{}".format(
             gt, challenge, int(round(time.time() * 1000)))
         data = requests.get(url).text
@@ -140,8 +144,8 @@ def run_scrape():
         cnt += 1
         if t_url in picSet:
             du_cnt += 1
-            print("\n检测到重复链接，当前总计重复{}张，本次任务重复率 {:.2}%".format(
-                du_cnt, (cnt+cnt_c)/du_cnt*100))
+            print("检测到重复链接，当前总计重复{}张，本次任务重复率 {:.2f}%".format(
+                du_cnt,(du_cnt/(cnt+cnt_c))*100))
             continue
         picSet.add(t_url)
         fd.write(t_url + '\n')
@@ -153,14 +157,17 @@ def run_scrape():
 
 
 # 打开用于记录URL的文件
-fd = open("image_url.txt",'a+')
+fd = open("image_url.txt",'r')
 
 # 把所有文件中已经读到的添加到set中
 line = fd.readline()
 while line: 
     picSet.add(line)
-    line = f.readline()
+    line = fd.readline()
+ar_num = len(picSet)
+fd.close()
 
+fd = open("image_url.txt",'a')
 # 开始运行爬虫
 run_scrape()
 
