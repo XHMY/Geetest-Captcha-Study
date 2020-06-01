@@ -95,13 +95,13 @@ def download_image(threadID):
 error_img_list = []  # 错误列表
 # picurlQ = []  # 下载图片任务队列
 picSet = set()  # 记录所有下载过的图片的集合
-ar_num = 0
+
 
 
 # finish = False  # 完成标示
 
 
-def run_scrape():
+def run_scrape(ar_num):
     task_num = 100000  # 爬多少个验证码停止（包括重复的）
     cnt = 0  # 用于记录一部分总数
     cnt_c = 0  # 用于记录重试次数
@@ -157,9 +157,8 @@ def run_scrape():
             picSet.add(t_url)
             fd.write(t_url + '\n')
     except Exception as e:
-        ar_num  += (cnt + cnt_c)
         web.close()
-        run_scrape()
+        run_scrape(ar_num + cnt + cnt_c)
         # picurlQ.append(t_url)
         # finish = True
         # for i in range(thread_num):
@@ -180,7 +179,7 @@ fd.close()
 
 fd = open("image_url.txt", 'a')
 # 开始运行爬虫
-run_scrape()
+run_scrape(ar_num)
 
 # 关闭文件
 fd.close()
