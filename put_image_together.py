@@ -11,6 +11,8 @@ def img_cropped(filename):
 
 imgs = []
 for k in os.walk('imgs'):
+    if(k[0]!='imgs'):
+        continue
     for filename in k[2]:
         if(filename[-4:]!='.jpg'):
             continue
@@ -25,6 +27,7 @@ while True:
     vImg.append(cv2.hconcat(imgs[i:i+width]))
     i+=width
     if(i+width>len(imgs)):
+        cv2.imwrite("imgs/final/0v.jpg", cv2.hconcat(imgs[i:len(imgs)]))
         break
 
 hImg = []
@@ -33,9 +36,10 @@ while True:
     hImg.append(cv2.vconcat(vImg[i:i+height]))
     i+=height
     if(i+height>len(vImg)):
+        cv2.imwrite("imgs/final/0h.jpg", cv2.vconcat(vImg[i:len(vImg)]))
         break
 
-i=0
+i=1
 for img in hImg:
     cv2.imwrite("imgs/final/{}.jpg".format(i), img)
     i+=1
