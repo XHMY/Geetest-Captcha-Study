@@ -18,7 +18,7 @@ for k in os.walk('imgs'):
 
 
 width = 5
-height = 10
+height = 20
 vImg = []  
 i = 0
 while True:
