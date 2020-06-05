@@ -7,8 +7,8 @@ import base64
 import json
 
 
-with open("tencent.key",'r') as fd:
-    s_id = fd.readline()
+with open("1w_char/tencent.key",'r') as fd:
+    s_id = fd.readline()[:-1]
     s_pw = fd.readline()
 
 
@@ -30,7 +30,6 @@ def requset_tc(base64_data):
         req.from_json_string(params)
 
         resp = client.GeneralHandwritingOCR(req)
-        print(resp.to_json_string())
         return json.loads(resp.to_json_string())
 
     except TencentCloudSDKException as err:
@@ -40,10 +39,11 @@ def requset_tc(base64_data):
 
 data = []
 
-for i in range(1,76):
-    with open("imgs/final/{}.jpg".format(i), "rb") as f:
+for i in range(1,274):
+    with open("imgs/{}.jpg".format(i), "rb") as f:
         base64_data = base64.b64encode(f.read())
     data.append(requset_tc(base64_data))
+    print("imgs/{}.jpg Finish".format(i))
 
-with open("tc_api_data/response.json", 'w') as fd:
+with open("1w_char/tc_api_data/10w_API_response.json", 'w') as fd:
     fd.write(json.dumps(data))
