@@ -4,11 +4,11 @@ import cv2
 
 def img_cropped(filename, x1,x2,y1,y2):
     img = cv2.imread(filename)
-    return img[y1:y2, x1:x2]
-    # cropped = img[y1:y2, x1:x2]
-    # cv2.imshow('image',cropped)
-    # cv2.waitKey(0)
-    # v2.destroyAllWindows()
+    # return img[y1:y2, x1:x2]
+    cropped = img[y1:y2, x1:x2]
+    cv2.imshow('image',cropped)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 with open("1w_char/tc_api_data/3w_API_response.json", 'r') as fd:
     data = json.loads(fd.read())
@@ -39,6 +39,7 @@ with open("1w_char/tc_api_data/char_set_95_v1.0.json",'w') as fd:
     fd.write(json.dumps(list(char_set),ensure_ascii=False))
 with open("1w_char/tc_api_data/inva_char_set_95_v1.0.json",'w') as fd:
     fd.write(json.dumps(list(invalid_char_set),ensure_ascii=False))
-# cur = data[0]["TextDetections"][0]["Polygon"]
 
-# img_cropped("imgs/final/1.jpg",cur[0]["X"],cur[1]["X"],cur[1]["Y"],cur[2]["Y"])
+
+cur = data[0]["TextDetections"][0]["Polygon"]
+img_cropped("imgs/final/1.jpg",cur[0]["X"],cur[1]["X"],cur[1]["Y"],cur[2]["Y"])
