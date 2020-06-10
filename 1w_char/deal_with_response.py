@@ -39,6 +39,9 @@ with open("1w_char/tc_api_data/char_set_95_v2.0.json",'w') as fd:
     # for c in char_set:
     #     fd.write(c)
     fd.write(json.dumps(list(char_set),ensure_ascii=False))
+with open("1w_char/char_set_api{}.txt".format(len(char_set)),'w') as fd:
+    for c in char_set:
+        fd.write(c)
 with open("1w_char/tc_api_data/inva_char_set_95_v1.0.json",'w') as fd:
     fd.write(json.dumps(list(invalid_char_set),ensure_ascii=False))
 

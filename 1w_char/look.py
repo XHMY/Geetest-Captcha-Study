@@ -15,6 +15,7 @@ with open("1w_char/tc_api_data/char_set_95_v2.0.json",'r') as fd:
 total = len(char_list)
 du_num = 0
 print(total)
+char_set = set(char_list) - char_3500
 for c in char_list:
     if c in char_3500:
         du_num+=1
@@ -25,6 +26,10 @@ with open("1w_char/char_set_result{}.txt".format(len(char_3500)),'w') as fd:
     for c in char_3500:
         fd.write(c)
 
+
+with open("1w_char/char_set_no3500_{}.txt".format(len(char_set)),'w') as fd:
+    for c in char_set:
+        fd.write(c)
 
 print("重复率: {:.3f}%".format((du_num/total)*100))
 
